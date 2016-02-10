@@ -37,6 +37,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'userena',
+    'guardian',
+    'easy_thumbnails',
+    'accounts'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -74,12 +79,8 @@ WSGI_APPLICATION = 'cyberwisdom.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+import dj_database_url
+DATABASES = {'default': dj_database_url.config()}
 
 
 # Internationalization
@@ -100,3 +101,47 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+
+# GUARDIAN REQUIRED
+ANONYMOUS_USER_ID = -1
+AUTH_PROFILE_MODULE = 'accounts.MyProfile'
+
+# USERENA REQUIRED
+USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
+LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
+LOGIN_URL = '/accounts/signin/'
+LOGOUT_URL = '/accounts/signout/'
+
+# USERENA SETTINGS
+USERENA_SIGNIN_AFTER_SIGNUP = True
+USERENA_ACTIVATION_REQUIRED = True
+USERENA_MUGSHOT_DEFAULT = "mm"
+
+SITE_ID = 1
+
+# HEROKU REQUIRED
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(PROJECT_ROOT,'staticfiles')
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, 'static'),
+)
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+# HEROKU REQUIRED TO OUTPUT DJANGO LOG INTO CONSOLE
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'ERROR'),
+        },
+    },
+}
