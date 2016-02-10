@@ -113,6 +113,12 @@ USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
+AUTHENTICATION_BACKENDS = (
+    'userena.backends.UserenaAuthenticationBackend',
+    'guardian.backends.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 
 # USERENA SETTINGS
 USERENA_SIGNIN_AFTER_SIGNUP = True
